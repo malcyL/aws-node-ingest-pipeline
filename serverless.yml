@@ -32,6 +32,11 @@ provider:
       Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
 
 functions:
+  ftpData:
+    handler: src/ingest/lambda/ftpData.ftpData
+    events:
+      # Invoke Lambda function every minute
+      - schedule: rate(1 minute)
   create:
     handler: todos/create.create
     events:
