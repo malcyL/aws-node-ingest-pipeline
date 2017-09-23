@@ -38,6 +38,8 @@ functions:
       FTP_HOST: localhost
       FTP_USERNAME: anonymous
       FTP_PASSWORD: anonymous
+      S3_BUCKET: talis-test
+      S3_KEY_PREFIX: ml
     events:
       # Invoke Lambda function every minute
       - schedule: rate(1 minute)
