@@ -34,6 +34,10 @@ provider:
 functions:
   ftpData:
     handler: src/ingest/lambda/ftpData.ftpData
+    environment:
+      FTP_HOST: localhost
+      FTP_USERNAME: anonymous
+      FTP_PASSWORD: anonymous
     events:
       # Invoke Lambda function every minute
       - schedule: rate(1 minute)
