@@ -3,11 +3,14 @@
 var async = require('async');
 var JSFtp = require('jsftp');
 var AWS = require('aws-sdk');
+const uuid = require('uuid');
+const dynamodb = require('./dynamodb');
 
 module.exports.ftpData = (event, context) => {
   var awsS3 = new AWS.S3();
 
   const time = new Date();
+  const timestamp = new Date().getTime();
   console.log(`Your cron function "${context.functionName}" ran at ${time}`);
 
   console.log(`Connecting to ftp host "${process.env.FTP_HOST}"`);
@@ -29,7 +32,7 @@ module.exports.ftpData = (event, context) => {
           var bucket = process.env.S3_BUCKET
           var key = `${process.env.S3_KEY_PREFIX}/${file.name}`;
           async.waterfall([
-            function(cb) {
+            function getFtpSocket(cb) {
               console.log(`Obtaining socket for file ${file.name}`); 
               var Ftp = new JSFtp({
                 host: process.env.FTP_HOST,
@@ -38,7 +41,7 @@ module.exports.ftpData = (event, context) => {
               });
               Ftp.get(file.name,cb);
             },
-            function upload(socket, cb) {
+            function uploadToS3(socket, cb) {
               console.log(`Uploading file ${file.name} to bucket ${bucket} key: ${key}`); 
               var awsS3 = new AWS.S3();
               awsS3.upload({
@@ -47,12 +50,38 @@ module.exports.ftpData = (event, context) => {
                 Body: socket
               }, {partSize: 10 * 1024 * 1024, queueSize: 1}, cb);
             },
+            function recordUploadedFilename(something,cb) {
+              console.log(`File ${file.name} uploaded. Writing filename to uploaded table...`); 
+
+              const params = {
+                TableName: process.env.DYNAMODB_TABLE_UPLOADED,
+                Item: {
+                  id: uuid.v1(),
+                  filename: file.name,
+                  checked: false,
+                  createdAt: timestamp,
+                  updatedAt: timestamp,
+                }
+              };
+            
+              // write the todo to the database
+              dynamodb.put(params, (error) => {
+                // handle potential errors
+                if (error) {
+                  console.log(`File ${file.name} uploaded BUT NOT WRITTEN TO DATABASE!`); 
+                  console.log(`Error ${error}`); 
+                } else {
+                  console.log(`Filename ${file.name} written to database`); 
+                }
+                cb();
+              });
+            },
           ],
             function(err) {
               if (err) {
                 console.log(`Error uploading file ${file.name} Error: ${err}`); 
               } else {
-                console.log(`Uploaded file ${file.name}`); 
+                console.log(`Processing file ${file.name} completed`); 
               }
               callback();
             }
