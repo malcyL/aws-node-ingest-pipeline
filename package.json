@@ -12,5 +12,8 @@
     "serverless-offline": "^3.8.3",
     "uuid": "^2.0.3",
     "jsftp": "1.5.3"
+  },
+  "devDependencies": {
+    "serverless-offline-scheduler": "^0.3.3"
   }
 }

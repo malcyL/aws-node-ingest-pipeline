@@ -3,6 +3,7 @@ service: aws-node-ingest-pipeline
 frameworkVersion: ">=1.1.0 <2.0.0"
 
 plugins:
+  - serverless-offline-scheduler
   - serverless-dynamodb-local
   - serverless-offline
 

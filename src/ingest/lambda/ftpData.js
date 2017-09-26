@@ -80,10 +80,11 @@ module.exports.ftpData = (event, context) => {
             function(err) {
               if (err) {
                 console.log(`Error uploading file ${file.name} Error: ${err}`); 
+                throw err;
               } else {
                 console.log(`Processing file ${file.name} completed`); 
+                callback();
               }
-              callback();
             }
           );
         },
@@ -92,7 +93,10 @@ module.exports.ftpData = (event, context) => {
             console.log(`Error uploading file. Error: ${err}`); 
           } else {
             console.log(`Uploaded files`); 
-            context.succeed('OK');
+            // TODO: Why is this happening
+            // TypeError: context.succeed is not a function
+            //console.log(`Context ${context}`); 
+            //context.succeed('OK');
           }
         }
       );
