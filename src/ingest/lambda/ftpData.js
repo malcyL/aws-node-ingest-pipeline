@@ -23,7 +23,9 @@ module.exports.ftpData = (event, context) => {
   Ftp.ls("*", function(err, data) {
     if (err) {
       console.error(err);
-      context.fail(err);
+      if (context.hasOwnProperty('fail')) {
+        context.fail(err);
+      }
     } else {
       async.eachOfSeries(
         data,
@@ -70,17 +72,18 @@ module.exports.ftpData = (event, context) => {
                 if (error) {
                   console.log(`File ${file.name} uploaded BUT NOT WRITTEN TO DATABASE!`); 
                   console.log(`Error ${error}`); 
+                  cb(error);
                 } else {
                   console.log(`Filename ${file.name} written to database`); 
+                  cb(null);
                 }
-                cb();
               });
             },
           ],
             function(err) {
               if (err) {
                 console.log(`Error uploading file ${file.name} Error: ${err}`); 
-                throw err;
+                callback(err);
               } else {
                 console.log(`Processing file ${file.name} completed`); 
                 callback();
@@ -91,12 +94,16 @@ module.exports.ftpData = (event, context) => {
         function complete(err) {
           if (err) {
             console.log(`Error uploading file. Error: ${err}`); 
+            if (context.hasOwnProperty('fail')) {
+              context.fail(err);
+            }
           } else {
             console.log(`Uploaded files`); 
-            // TODO: Why is this happening
+            // TODO: Why is this happening?
             // TypeError: context.succeed is not a function
-            //console.log(`Context ${context}`); 
-            //context.succeed('OK');
+            if (context.hasOwnProperty('succeed')) {
+              context.succeed('OK');
+            }
           }
         }
       );
