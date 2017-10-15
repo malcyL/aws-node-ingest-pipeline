@@ -4,17 +4,7 @@ frameworkVersion: ">=1.1.0 <2.0.0"
 
 plugins:
   - serverless-offline-scheduler
-  - serverless-dynamodb-local
   - serverless-offline
-
-custom:
-  dynamodb:
-    start:
-      port: 8000
-      inMemory: true
-      migrate: true
-    migration:
-      dir: offline/migrations
 
 provider:
   name: aws
