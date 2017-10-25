@@ -5,14 +5,8 @@ var JSFtp = require('jsftp');
 var AWS = require('aws-sdk');
 const uuid = require('uuid');
 const dynamodb = require('./dynamodb');
-
-const proponojsConfig = {
-  accessKeyId: process.env.PROPONOJS_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.PROPONOJS_AWS_SECRET_KEY,
-  region: process.env.PROPONOJS_QUEUE_REGION,
-};
-console.log(proponojsConfig);
-const proponojs = require('proponojs')(proponojsConfig);
+const proponojsConfig = require('proponojs').env_config;
+const proponojs = require('proponojs').proponojs(proponojsConfig);
 
 module.exports.ftpData = (event, context) => {
   var awsS3 = new AWS.S3();
