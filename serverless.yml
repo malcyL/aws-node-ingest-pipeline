@@ -32,6 +32,9 @@ functions:
       FTP_PASSWORD: anonymous
       S3_BUCKET: talis-test
       S3_KEY_PREFIX: ml
+      PROPONOJS_AWS_ACCESS_KEY_ID: ${env:PROPONOJS_AWS_ACCESS_KEY_ID}
+      PROPONOJS_AWS_SECRET_KEY: ${env:PROPONOJS_AWS_SECRET_KEY}
+      PROPONOJS_QUEUE_REGION: ${env:PROPONOJS_QUEUE_REGION}
     events:
       # Invoke Lambda function every minute
       - schedule: rate(1 minute)

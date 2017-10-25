@@ -6,13 +6,17 @@
   "author": "Malcolm Landon <malcolm@landonsonline.me.uk>",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.12.0",
     "async": "1.5.0",
+    "aws-sdk": "^2.12.0",
+    "jsftp": "1.5.3",
+    "proponojs": "git://github.com/malcyl/proponojs.git",
     "serverless-offline": "^3.8.3",
-    "uuid": "^2.0.3",
-    "jsftp": "1.5.3"
+    "uuid": "^2.0.3"
   },
   "devDependencies": {
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
     "serverless-offline-scheduler": "^0.3.3"
   }
 }

@@ -6,6 +6,14 @@ var AWS = require('aws-sdk');
 const uuid = require('uuid');
 const dynamodb = require('./dynamodb');
 
+const proponojsConfig = {
+  accessKeyId: process.env.PROPONOJS_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.PROPONOJS_AWS_SECRET_KEY,
+  region: process.env.PROPONOJS_QUEUE_REGION,
+};
+console.log(proponojsConfig);
+const proponojs = require('proponojs')(proponojsConfig);
+
 module.exports.ftpData = (event, context) => {
   var awsS3 = new AWS.S3();
 
@@ -100,6 +108,20 @@ module.exports.ftpData = (event, context) => {
                         cb(error);
                       } else {
                         console.log(`Filename ${file.name} written to database`); 
+                        cb(null);
+                      }
+                    });
+                  },
+                  function publish(cb) {
+                    console.log(`Publishing ${file.name} uploaded.`); 
+                    const message = {
+                      'event': 'upload',
+                      'filename': file.name
+                    };
+                    proponojs.publish('ml-test-ftp-data-upload', message, (err, data) => {
+                      if (err) {
+                        cb(err);
+                      } else {
                         cb(null);
                       }
                     });
