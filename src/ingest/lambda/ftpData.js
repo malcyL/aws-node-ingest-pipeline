@@ -93,7 +93,7 @@ module.exports.ftpData = (event, context) => {
                       }
                     };
                   
-                    // write the todo to the database
+                    // write the file to the database
                     dynamodb.put(params, (error) => {
                       // handle potential errors
                       if (error) {
